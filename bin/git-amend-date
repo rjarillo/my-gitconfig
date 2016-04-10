@@ -1,0 +1,34 @@
+#!/bin/sh
+#
+# Copyright (c) 2015
+# Author: Victor Arribas <v.arribas.urjc@gmail.com>
+# License: GPLv3 <http://www.gnu.org/licenses/gpl-3.0.html>
+#
+# Change the commit and author date of last git commit (ammend).
+# Usage: git ammend-date <commit date> [author date]
+#
+
+_COMMIT_DATE="${1-}"
+_AUTHOR_DATE="${2-}"
+
+if test -z "$_COMMIT_DATE"; then
+    echo "Commit date not set." >&2
+    exit 1
+fi
+
+GIT_COMMITTER_DATE="$_COMMIT_DATE"
+
+if test -n "$_AUTHOR_DATE"; then
+	GIT_AUTHOR_DATE="$_AUTHOR_DATE"
+else
+	GIT_AUTHOR_DATE="$_COMMIT_DATE"
+fi
+
+export GIT_COMMITTER_DATE
+export GIT_AUTHOR_DATE
+
+git commit --amend --allow-empty --date "$GIT_AUTHOR_DATE"
+
+unset GIT_COMMITTER_DATE
+unset GIT_AUTHOR_DATE
+
